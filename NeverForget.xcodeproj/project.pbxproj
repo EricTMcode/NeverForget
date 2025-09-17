@@ -10,9 +10,22 @@
 		077DB1012E7AF74E000435E6 /* NeverForget.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NeverForget.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		07F5D1C22E7AFBE20034127C /* Exceptions for "NeverForget" folder in "NeverForget" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 077DB1002E7AF74E000435E6 /* NeverForget */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		077DB1032E7AF74E000435E6 /* NeverForget */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				07F5D1C22E7AFBE20034127C /* Exceptions for "NeverForget" folder in "NeverForget" target */,
+			);
 			path = NeverForget;
 			sourceTree = "<group>";
 		};
@@ -256,6 +269,8 @@
 				DEVELOPMENT_TEAM = H7MDDDPC4H;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = NeverForget/Info.plist;
+				INFOPLIST_KEY_NSCalendarsUsageDescription = "We need to read events from your calendar.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -288,6 +303,8 @@
 				DEVELOPMENT_TEAM = H7MDDDPC4H;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = NeverForget/Info.plist;
+				INFOPLIST_KEY_NSCalendarsUsageDescription = "We need to read events from your calendar.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
