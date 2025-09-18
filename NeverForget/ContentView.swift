@@ -5,6 +5,7 @@
 //  Created by Eric on 17/09/2025.
 //
 
+import AlarmKit
 import EventKit
 import SwiftUI
 
@@ -13,6 +14,7 @@ struct ContentView: View {
 
     @State private var eventStore = EKEventStore()
     @State private var events = [EKEvent]()
+    @State private var alarms = [UUID]()
 
     var body: some View {
         NavigationStack {
@@ -37,6 +39,7 @@ struct ContentView: View {
                 }
             }
         }
+        .onAppear(perform: startWatchingAlarms)
     }
 
     func loadEvents() async throws {
@@ -54,6 +57,14 @@ struct ContentView: View {
         }
 
         events = firstInstances.sorted { $0.startDate < $1.startDate }
+    }
+
+    func startWatchingAlarms() {
+        Task {
+            for await update in AlarmManager.shared.alarmUpdates {
+                alarms = update.map(\.id)
+            }
+        }
     }
 }
 
