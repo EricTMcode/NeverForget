@@ -9,6 +9,10 @@ import AlarmKit
 import EventKit
 import SwiftUI
 
+struct NeverForgetData: AlarmMetadata {
+
+}
+
 struct ContentView: View {
     @Environment(\.scenePhase) private var scenePhase
 
@@ -16,11 +20,13 @@ struct ContentView: View {
     @State private var events = [EKEvent]()
     @State private var alarms = [UUID]()
 
+    @AppStorage("alarmOffset") private var alarmOffest = 0
+
     var body: some View {
         NavigationStack {
             List(events, id: \.eventIdentifier) { event in
                 Button {
-                    print("DEBUG: Toogle alarm for \(String(describing: event.title))")
+                    toggleAlarm(for: event)
                 } label: {
                     HStack {
                         VStack (alignment: .leading) {
@@ -38,6 +44,17 @@ struct ContentView: View {
                 }
             }
             .navigationTitle("NeverForget")
+            .toolbar {
+                Menu("Time", systemImage: "gear") {
+                    Picker("Time", selection: $alarmOffset) {
+                        Text("At time of event").tag(0)
+
+                        ForEach(1..<4) { i in
+                            Text("^[\(i) minute](inflect: true) before").tag(-i * 60)
+                        }
+                    }
+                }
+            }
         }
         .onChange(of: scenePhase) {
             if scenePhase == .active {
@@ -83,8 +100,27 @@ struct ContentView: View {
 //        let relativeSchedule = Alarm.Schedule.Relative(time: time, repeats: .never)
 //        let schedule = Alarm.Schedule.relative(relativeSchedule)
 
-        let schedule = Alarm.Schedule.fixed(event.startDate)
+        let schedule = Alarm.Schedule.fixed(event.startDate.offsetBy(days: 0, seconds: alarmOffest))
 
+        let alert = AlarmPresentation.Alert(
+            title: .init(stringLiteral: event.title),
+            stopButton: AlarmButton(
+                text: "Stop",
+                textColor: .blue,
+                systemImageName: "stop.circle"
+            )
+        )
+
+        let presentation = AlarmPresentation(alert: alert)
+        let attributes = AlarmAttributes(presentation: presentation, metadata: NeverForgetData(), tintColor: .blue)
+        let configuration = AlarmManager.AlarmConfiguration(schedule: schedule, attributes: attributes)
+
+        do {
+            let newAlarm = try await AlarmManager.shared.schedule(id: event.neverForgetID, configuration: configuration)
+            print("DEBUG: Scheduled \(newAlarm.id)")
+        } catch {
+            print(error)
+        }
     }
 
     func unscheduleAlarm(for event: EKEvent) {
@@ -97,6 +133,18 @@ struct ContentView: View {
                 unscheduleAlarm(for: event)
             } else {
                 try await scheduleAlarm(for: event)
+            }
+        }
+    }
+
+    func updateAlarms() {
+        Task {
+            for alarm in alarms {
+                try? AlarmManager.shared.cancel(id: alarm)
+
+                if let event = events.first(where: { $0.neverForgetID == alarm }) {
+                    try await scheduleAlarm(for: event)
+                }
             }
         }
     }
