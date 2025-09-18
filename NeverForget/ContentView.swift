@@ -46,7 +46,7 @@ struct ContentView: View {
             .navigationTitle("NeverForget")
             .toolbar {
                 Menu("Time", systemImage: "gear") {
-                    Picker("Time", selection: $alarmOffset) {
+                    Picker("Time", selection: $alarmOffest) {
                         Text("At time of event").tag(0)
 
                         ForEach(1..<4) { i in
@@ -63,6 +63,7 @@ struct ContentView: View {
                 }
             }
         }
+        .onChange(of: alarmOffest, updateAlarms)
         .onAppear(perform: startWatchingAlarms)
     }
 
