@@ -27,6 +27,13 @@ struct ContentView: View {
                             Text(event.title)
                             Text(event.startDate, format: .dateTime.month().day().hour().minute())
                         }
+
+                        Spacer()
+
+                        if alarms.contains(event.neverForgetID) {
+                            Image(systemName: "checkmark")
+                                .foregroundStyle(.green)
+                        }
                     }
                 }
             }
@@ -63,6 +70,33 @@ struct ContentView: View {
         Task {
             for await update in AlarmManager.shared.alarmUpdates {
                 alarms = update.map(\.id)
+            }
+        }
+    }
+
+    func scheduleAlarm(for event: EKEvent) async throws {
+//        let components = Calendar.current.dateComponents([.hour, .minute], from: event.startDate)
+//        let hour = components.hour ?? 0
+//        let minute = components.minute ?? 0
+//
+//        let time = Alarm.Schedule.Relative.Time(hour: hour, minute: minute)
+//        let relativeSchedule = Alarm.Schedule.Relative(time: time, repeats: .never)
+//        let schedule = Alarm.Schedule.relative(relativeSchedule)
+
+        let schedule = Alarm.Schedule.fixed(event.startDate)
+
+    }
+
+    func unscheduleAlarm(for event: EKEvent) {
+        try? AlarmManager.shared.cancel(id: event.neverForgetID)
+    }
+
+    func toggleAlarm(for event: EKEvent) {
+        Task {
+            if alarms.contains(event.neverForgetID) {
+                unscheduleAlarm(for: event)
+            } else {
+                try await scheduleAlarm(for: event)
             }
         }
     }
